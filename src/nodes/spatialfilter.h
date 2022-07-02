@@ -9,6 +9,7 @@
  */
 
 #pragma once
+#include "node.h"
 namespace toC {
 
 class SpatialFilter : public Node {
@@ -32,6 +33,8 @@ class SpatialFilter : public Node {
 	int group;
 	std::vector<int64_t> pads;
 	std::vector<int64_t> strides;
+	std::vector<int64_t> output_padding;
+	std::vector<int64_t> output_shape;
 
 	virtual void parseAttributes( onnx::NodeProto &node ) override {
 		for( const auto& a : node.attribute() ) {
@@ -47,6 +50,10 @@ class SpatialFilter : public Node {
 				pads = parse_attribute_ints(a);
 			else if( a.name() == "strides" )
 				strides = parse_attribute_ints(a);
+			else if( a.name() == "output_padding" )
+				output_padding = parse_attribute_ints(a);
+			else if( a.name() == "output_shape" )
+				output_shape = parse_attribute_ints(a);
 		}
 	}
 
@@ -164,7 +171,15 @@ class SpatialFilter : public Node {
 			for( int s: strides)
 				dst << s << " ";
 			dst << std::endl;
-		INDT_1 << " */" << std::endl;
+		INDT_1 << " * output_padding: ";
+			for( int o: output_padding)
+				dst << o << " ";
+			dst << std::endl;
+		INDT_1 << " * output_shape: ";
+			for( int o: output_shape)
+				dst << o << " ";
+			dst << std::endl;
+			INDT_1 << " */" << std::endl;
 	}
 
 
